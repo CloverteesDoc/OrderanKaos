@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Form Pemesanan Clovertees</title>
+  <style>
+    body {
+      font-family: Roboto, sans-serif;
+      background-color: #b4ffc1;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    form {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #202124;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 500;
+      color: #202124;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #dadce0;
+      border-radius: 5px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      background-color: #1a73e8;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .warna-section {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #f8f9fa;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .total-section {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e8f0fe;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #1a237e;
+      white-space: pre-line;
+    }
+
+    .note {
+      background-color: #fff8e1;
+      padding: 15px;
+      margin-top: 20px;
+      border-left: 6px solid #f9a825;
+      border-radius: 5px;
+      font-size: 14px;
+      color: #5d4037;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+<form id="formPemesanan">
+  <h2>Form Pemesanan Clovertees</h2>
+
+  <label>Nama:</label>
+  <input type="text" name="nama" required>
+
+  <label>No Telp / WA:</label>
+  <input type="text" name="telepon" required>
+
+  <label>Instagram:</label>
+  <input type="text" name="instagram" required>
+
+  <label>Alamat:</label>
+  <textarea name="alamat" required></textarea>
+
+  <div id="warnaContainer"></div>
+
+  <button type="button" onclick="tambahWarna()">Tambah Warna</button>
+
+  <div class="total-section" id="totalDisplay">Total Semua:
+  </div>
+
+  <div class="note">
+Mohon diperhatikan!
+Setelah melengkapi data di form pemesanan, warna dan size tidak dapat diganti lagi.
+
+Berikut ini syarat & ketentuan untuk belanja di Clovertees:
+* Mohon konfirmasi apabila sudah tranfer
+* Desain akan diproses sesuai antrian
+  (Yang transfer duluan diproses duluan)
+* Proses pembuatan +/- 4 s/d 7 hari setelah approve desain
+  NB: tergantung pada qty pesanan (apabila size dan warna baju ready)
+* Untuk warna baju dress, tshirt kids dan dewasa sedikit berbeda, dikarenakan:
+  (Kids dan dress bahan cotton combed 24s dan dewasa cotton combed 30s)
+
+Order => setuju
+
+Thank you for trusting and shopping with Clovertees 😊😊👍
+  </div>
+
+  <button type="submit">Kirim Pesanan</button>
+</form>
+
+<script>
+const warnaList = [
+  "BLACK", "WHITE", "SOFT PINK", "NEON PINK", "RED", "MAROON", "LILAC", "SKY BLUE",
+  "ROYAL BLUE", "NAVY BLUE", "NEON YELLOW", "TOSCA", "GREEN", "FOREST GREEN",
+  "YELLOW", "ORANGE", "MUSTARD"
+];
+
+let warnaIndex = 0;
+
+function tambahWarna() {
+  warnaIndex++;
+  const container = document.getElementById('warnaContainer');
+  const div = document.createElement('div');
+  div.className = "warna-section";
+
+  let html = `
+    <label>Warna Kaos/Dress #${warnaIndex}:</label>
+    <select name="warna${warnaIndex}" required onchange="updateTotal()">
+      <option value="">-- Pilih Warna --</option>
+      ${warnaList.map(w => `<option value="${w}">${w}</option>`).join('')}
+    </select>
+
+    <h4>Dewasa</h4>
+    <table>
+      <tr>
+        <th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>2XL</th><th>3XL</th>
+      </tr>
+      <tr>
+        ${["XS", "S", "M", "L", "XL", "2XL", "3XL"].map(size =>
+          `<td><input type="number" name="dewasa_${warnaIndex}_${size}" min="0" value="0" oninput="updateTotal()"></td>`
+        ).join('')}
+      </tr>
+    </table>
+
+    <h4>Anak-Anak</h4>
+    <table>
+      <tr>
+        <th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th>
+      </tr>
+      <tr>
+        ${["XS", "S", "M", "L", "XL"].map(size =>
+          `<td><input type="number" name="anak_${warnaIndex}_${size}" min="0" value="0" oninput="updateTotal()"></td>`
+        ).join('')}
+      </tr>
+    </table>
+
+    <h4>Perincian Desain</h4>
+    <table>
+      <tr><th>Bagian Depan</th><th>Bagian Belakang</th><th>Lengan</th></tr>
+      <tr>
+        <td>
+          <textarea name="desain_depan_${warnaIndex}" rows="2"></textarea>
+          <input type="file" name="file_depan_${warnaIndex}[]" multiple>
+        </td>
+        <td>
+          <textarea name="desain_belakang_${warnaIndex}" rows="2"></textarea>
+          <input type="file" name="file_belakang_${warnaIndex}[]" multiple>
+        </td>
+        <td>
+          <textarea name="desain_lengan_${warnaIndex}" rows="2"></textarea>
+          <input type="file" name="file_lengan_${warnaIndex}[]" multiple>
+        </td>
+      </tr>
+    </table>
+  `;
+
+  div.innerHTML = html;
+  container.appendChild(div);
+  updateTotal();
+}
+
+function kumpulkanDetailPesanan() {
+  const container = document.getElementById('warnaContainer');
+  const sections = container.querySelectorAll('.warna-section');
+  let hasil = [];
+
+  sections.forEach((section, index) => {
+    const warna = section.querySelector('select').value;
+    const dewasaInputs = section.querySelectorAll('input[name^="dewasa_"]');
+    const anakInputs = section.querySelectorAll('input[name^="anak_"]');
+    const desainDepan = section.querySelector(`textarea[name^="desain_depan_"]`)?.value || "";
+    const desainBelakang = section.querySelector(`textarea[name^="desain_belakang_"]`)?.value || "";
+    const desainLengan = section.querySelector(`textarea[name^="desain_lengan_"]`)?.value || "";
+
+    let dewasaDetail = [];
+    dewasaInputs.forEach(input => {
+      const val = parseInt(input.value) || 0;
+      if (val > 0) {
+        const size = input.name.split('_')[2];
+        dewasaDetail.push(`${size} ${val} pcs`);
+      }
+    });
+
+    let anakDetail = [];
+    anakInputs.forEach(input => {
+      const val = parseInt(input.value) || 0;
+      if (val > 0) {
+        const size = input.name.split('_')[2];
+        anakDetail.push(`${size} ${val} pcs`);
+      }
+    });
+
+    hasil.push(
+      `Warna: ${warna}\n` +
+      (dewasaDetail.length ? `  Dewasa: ${dewasaDetail.join(', ')}\n` : '') +
+      (anakDetail.length ? `  Anak: ${anakDetail.join(', ')}\n` : '') +
+      (desainDepan ? `  Desain Depan: ${desainDepan}\n` : '') +
+      (desainBelakang ? `  Desain Belakang: ${desainBelakang}\n` : '') +
+      (desainLengan ? `  Desain Lengan: ${desainLengan}\n` : '')
+    );
+  });
+
+  return hasil.join('\n');
+}
+
+const scriptURL = "https://script.google.com/macros/s/AKfycbw2mAqevX3IRO1jiPpHwk8D9JhWPnYNhqog0UJWi67gljEmwbk2E-MWzhU52EUDxrjnkw/exec"; 
+const form = document.getElementById('formPemesanan');
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  
+  const formData = new FormData(form);
+  formData.append("total", document.getElementById("totalDisplay").innerText);
+  formData.append("rincian", kumpulkanDetailPesanan());
+
+
+  fetch(scriptURL, { method: 'POST', body: formData })
+    .then(response => {
+      alert("Pesanan berhasil dikirim!");
+      form.reset();
+      document.getElementById('warnaContainer').innerHTML = "";
+      tambahWarna();
+      updateTotal();
+    })
+    .catch(error => {
+      console.error("Error!", error.message);
+      alert("Gagal mengirim pesanan!");
+    });
+});
+
+function updateTotal() {
+  const container = document.getElementById('warnaContainer');
+  const sections = container.querySelectorAll('.warna-section');
+  let totalOutput = '';
+  let totalSemua = 0;
+  sections.forEach((section, index) => {
+    const warna = section.querySelector('select').value;
+    const dewasaInputs = section.querySelectorAll('input[name^="dewasa_"]');
+    const anakInputs = section.querySelectorAll('input[name^="anak_"]');
+    let dewasaMap = {};
+    let anakMap = {};
+    let subtotal = 0;
+
+    dewasaInputs.forEach(input => {
+      const jumlah = parseInt(input.value) || 0;
+      if (jumlah > 0) {
+        const size = input.name.split('_')[2];
+        dewasaMap[size] = (dewasaMap[size] || 0) + jumlah;
+        subtotal += jumlah;
+      }
+    });
+
+    anakInputs.forEach(input => {
+      const jumlah = parseInt(input.value) || 0;
+      if (jumlah > 0) {
+        const size = input.name.split('_')[2];
+        anakMap[size] = (anakMap[size] || 0) + jumlah;
+        subtotal += jumlah;
+      }
+    });
+
+    if (warna && (Object.keys(dewasaMap).length > 0 || Object.keys(anakMap).length > 0)) {
+      const dewasaDetail = Object.entries(dewasaMap).map(([size, count]) => `${size} ${count} pcs`).join(', ');
+      const anakDetail = Object.entries(anakMap).map(([size, count]) => `${size} ${count} pcs`).join(', ');
+
+      totalOutput += `${index + 1}. Warna       : ${warna}\n`;
+      if (dewasaDetail) totalOutput += `   Dewasa      : ${dewasaDetail}\n`;
+      if (anakDetail) totalOutput += `   Anak-anak : ${anakDetail}\n`;
+    }
+    totalSemua += subtotal;
+  });
+  document.getElementById('totalDisplay').textContent = `Total Semua: ${totalSemua} pcs\n\n${totalOutput}`;
+}
+
+// Tambah satu warna default
+window.onload = tambahWarna;
+</script>
+
+</body>
+</html>
